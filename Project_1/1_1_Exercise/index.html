@@ -34,24 +34,25 @@
             text-align: justify;
         }
         nav li {
-            /* BROKEN: Float direction incorrect */
             float: none;
-            /* BROKEN: List style still visible */
             list-style-type: none
         }
 
         nav a {
             /* BROKEN: Display type incorrect */
-            display: hiding;
+            display: grid;
             /* BROKEN: Padding missing some sides */
             padding-top: 15px;
             padding-bottom: 15px;
+            padding-right: 15px;
+            padding-left: 15px;
             /* BROKEN: Text decoration not removed */
             color: white;
+            text-decoration: none;
             /* BROKEN: Font weight incorrect value */
-            font-weight: extra-bold;
+            font-weight: bold;
             /* BROKEN: Incorrect text transform value */
-            text-transform: bigger;
+            text-transform: uppercase;
         }
 
         /* BROKEN: Hover effect missing */
