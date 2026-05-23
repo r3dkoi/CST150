@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savory Seasons Restaurant</title>
+    <style>
+        /* Base styles - Some are working, some are broken */
+        body {
+            /* BROKEN: Font-family not working */
+            font-family: comic sans;
+            /* BROKEN: Background color not applying */
+            background-color: #f9f5f0;
+            /* BROKEN: Margin missing units */
+            margin: 0 20 0 20;
+            /* BROKEN: Padding incorrect syntax */
+            padding: top 20px;
+        }
+
+        /* Header section - Broken alignment and spacing */
+        header {
+            /* BROKEN: Incorrect background color format */
+            background-color: darkblue;
+            /* BROKEN: Text alignment misspelled */
+            text-aling: center;
+            /* BROKEN: Padding only applied to top */
+            padding-top: 20px;
+            /* BROKEN: Missing color for text */
+        }
+
+        /* Navigation menu - Broken styling */
+        nav {
+            /* BROKEN: Missing background color */
+            /* BROKEN: Incorrect display value */
+            display: blocks;
+            /* BROKEN: Overflow not set */
+        }
+
+        /* BROKEN: Missing selector for nav ul */
+        
+        nav li {
+            /* BROKEN: Float direction incorrect */
+            float: center;
+            /* BROKEN: List style still visible */
+        }
+
+        nav a {
+            /* BROKEN: Display type incorrect */
+            display: hiding;
+            /* BROKEN: Padding missing some sides */
+            padding-top: 15px;
+            padding-bottom: 15px;
+            /* BROKEN: Text decoration not removed */
+            color: white;
+            /* BROKEN: Font weight incorrect value */
+            font-weight: extra-bold;
+            /* BROKEN: Incorrect text transform value */
+            text-transform: bigger;
+        }
+
+        /* BROKEN: Hover effect missing */
+
+        /* Main content area */
+        main {
+            /* BROKEN: Max width incorrect format */
+            max-width: 80percents;
+            /* BROKEN: Margin not centered */
+            margin: 20px;
+            /* BROKEN: Line height too small */
+            line-height: 0.8;
+        }
+
+        /* Menu section */
+        .menu-section {
+            /* BROKEN: Border incorrect format */
+            border: dotted, #ccc, 1px;
+            /* BROKEN: Border radius incorrect */
+            border-round: 10px;
+            /* BROKEN: Margin bottom missing */
+        }
+
+        .menu-item {
+            /* BROKEN: Display type incorrect */
+            display: blocked;
+            /* BROKEN: Padding missing units */
+            padding: 10;
+            /* BROKEN: Border bottom incorrect */
+            bottom-border: solid #eee 1px;
+        }
+
+        /* Menu item details */
+        .item-name {
+            /* BROKEN: Font weight incorrect */
+            font-weight: 700px;
+            /* BROKEN: Color value incorrect */
+            color: dark-brown;
+        }
+
+        .item-price {
+            /* BROKEN: Font style incorrect value */
+            font-style: bigger;
+            /* BROKEN: Float direction incorrect */
+            float: right-side;
+            /* BROKEN: Color missing */
+        }
+
+        .item-description {
+            /* BROKEN: Color incorrect format */
+            color: grey+;
+            /* BROKEN: Font size incorrect format */
+            font-size: small-medium;
+            /* BROKEN: Margin top missing */
+        }
+
+        /* Images */
+        .food-image {
+            /* BROKEN: Width incorrect format */
+            width: 100percents;
+            /* BROKEN: Height incorrect */
+            height: auto auto;
+            /* BROKEN: Border radius missing units */
+            border-radius: 15;
+            /* BROKEN: Margin incorrect format */
+            margin: top 10px bottom 20px;
+        }
+
+        /* Hours section */
+        .hours {
+            /* BROKEN: Background color incorrect format */
+            background: #f0f0f;
+            /* BROKEN: Padding incorrect */
+            padding: left-right 20px;
+            /* BROKEN: Text align incorrect */
+            text-place: center;
+        }
+
+        /* Footer */
+        footer {
+            /* BROKEN: Text align incorrect */
+            text-align: middle;
+            /* BROKEN: Background color incorrect value */
+            background-color: navy-blue;
+            /* BROKEN: Color missing */
+            /* BROKEN: Padding incorrect */
+            padding: 10px 10px;
+        }
+
+        /* BROKEN: Media query missing closing bracket */
+        @media (max-width: 768px) {
+            nav li {
+                float: none;
+                text-align: center;
+            }
+            
+            .menu-item {
+                padding: 5px;
+            }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Savory Seasons</h1>
+        <p>Fine Dining & Culinary Experience</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#hours">Hours</a></li>
+            <li><a href="#location">Location</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="home">
+            <h2>Welcome to Savory Seasons</h2>
+            <p>Experience the finest culinary delights in a warm and inviting atmosphere. Our restaurant combines traditional recipes with modern techniques to create unforgettable dining experiences.</p>
+            <img class="food-image" src="/api/placeholder/600/400" alt="Restaurant interior">
+        </section>
+
+        <section id="menu">
+            <h2>Our Menu</h2>
+            
+            <div class="menu-section">
+                <h3>Appetizers</h3>
+                
+                <div class="menu-item">
+                    <span class="item-name">Bruschetta</span>
+                    <span class="item-price">$8.95</span>
+                    <p class="item-description">Toasted bread topped with fresh tomatoes, garlic, basil, and olive oil.</p>
+                </div>
+                
+                <div class="menu-item">
+                    <span class="item-name">Stuffed Mushrooms</span>
+                    <span class="item-price">$10.95</span>
+                    <p class="item-description">Button mushrooms filled with our signature herb and cheese stuffing.</p>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Main Courses</h3>
+                
+                <div class="menu-item">
+                    <span class="item-name">Herb Roasted Chicken</span>
+                    <span class="item-price">$18.95</span>
+                    <p class="item-description">Free-range chicken roasted with seasonal herbs and served with roasted vegetables.</p>
+                </div>
+                
+                <div class="menu-item">
+                    <span class="item-name">Grilled Salmon</span>
+                    <span class="item-price">$22.95</span>
+                    <p class="item-description">Fresh Atlantic salmon grilled to perfection with lemon butter sauce.</p>
+                </div>
+                
+                <div class="menu-item">
+                    <span class="item-name">Vegetable Risotto</span>
+                    <span class="item-price">$16.95</span>
+                    <p class="item-description">Creamy Arborio rice cooked with seasonal vegetables and Parmesan cheese.</p>
+                </div>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Desserts</h3>
+                
+                <div class="menu-item">
+                    <span class="item-name">Tiramisu</span>
+                    <span class="item-price">$7.95</span>
+                    <p class="item-description">Classic Italian dessert with layers of coffee-soaked ladyfingers and mascarpone cream.</p>
+                </div>
+                
+                <div class="menu-item">
+                    <span class="item-name">Chocolate Lava Cake</span>
+                    <span class="item-price">$8.95</span>
+                    <p class="item-description">Warm chocolate cake with a molten center, served with vanilla ice cream.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="hours" class="hours">
+            <h2>Hours of Operation</h2>
+            <p>Monday - Thursday: 11:00 AM to 9:00 PM</p>
+            <p>Friday - Saturday: 11:00 AM to 11:00 PM</p>
+            <p>Sunday: 10:00 AM to 8:00 PM</p>
+        </section>
+
+        <section id="location">
+            <h2>Our Location</h2>
+            <p>39 Regent St, Chippendale NSW 2008</p>
+            <img class="food-image" src="/api/placeholder/600/300" alt="Map location">
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>Phone: (+61) 123-4567</p>
+            <p>Email: info@savoryseasons.com</p>
+            
+            <form>
+                <h3>Reservation Request</h3>
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <div>
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date">
+                </div>
+                <div>
+                    <label for="time">Time:</label>
+                    <input type="time" id="time" name="time">
+                </div>
+                <div>
+                    <label for="guests">Number of Guests:</label>
+                    <input type="number" id="guests" name="guests" min="1" max="20">
+                </div>
+                <div>
+                    <label for="message">Special Requests:</label>
+                    <textarea id="message" name="message"></textarea>
+                </div>
+                <button type="submit">Request Reservation</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Savory Seasons Restaurant. All rights reserved.</p>
+        <p>Follow us on social media for updates and promotions!</p>
+    </footer>
+</body>
+</html>
