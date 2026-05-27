@@ -22,6 +22,19 @@ aside { grid-area: aside; background: #ddd; padding: 20px; }
 footer { grid-area: footer; background: #333; color: white;
 padding: 20px; text-align: center; }
 
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+}
+
 /* MEDIA QUERY - OVERRIDES CHANGES ON SMALL SCREENS */
 @media (max-width: 768px) {
     body {
@@ -33,5 +46,12 @@ padding: 20px; text-align: center; }
         "footer";
         grid-template-columns: 1fr;
         grid-template-rows: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
     }
 }
