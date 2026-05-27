@@ -1,4 +1,3 @@
-@media (max-width: 768px) {
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -22,4 +21,17 @@ main { grid-area: main; background: #f4f4f4; padding: 20px; }
 aside { grid-area: aside; background: #ddd; padding: 20px; }
 footer { grid-area: footer; background: #333; color: white;
 padding: 20px; text-align: center; }
+
+/* MEDIA QUERY - OVERRIDES CHANGES ON SMALL SCREENS */
+@media (max-width: 768px) {
+    body {
+        grid-template-areas:
+        "header"
+        "nav"
+        "main"
+        "aside"
+        "footer";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
 }
