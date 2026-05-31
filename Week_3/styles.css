@@ -35,6 +35,16 @@ nav a {
     padding: 10px;
 }
 
+/*Button interactivity */
+#text {
+    color: green;
+    transition: color 0.3s;
+}
+
+#text_colour_toggle {
+    color: red;
+}
+
 /* MEDIA QUERY - OVERRIDES CHANGES ON SMALL SCREENS */
 @media (max-width: 768px) {
     body {
