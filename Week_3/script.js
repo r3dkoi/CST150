@@ -16,5 +16,5 @@ let text = document.getElementById("text");
 
 button.addEventListener("click", function() {
     text.textContent = "You clicked the button!";
-    text.style.color = "green";
-})
+    text.classList.toggle('text_colour_toggle');
+});
