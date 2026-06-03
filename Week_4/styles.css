@@ -29,6 +29,10 @@ nav ul {
     justify-content: space-around;
 }
 
+#hamburger_menu {
+    display: block;
+    margin: 0 auto;
+}
 nav a {
     text-decoration: none;
     color: white;
@@ -44,6 +48,7 @@ nav a {
 #text.text_colour_toggle {
     color: red;
 }
+
 
 /* MEDIA QUERY - OVERRIDES CHANGES ON SMALL SCREENS */
 @media (max-width: 768px) {
@@ -63,5 +68,12 @@ nav a {
     nav ul {
         flex-direction: column;
         align-items: center;
+        display: none; 
     }
+    /* Collapsing navigation */
+    .collapsible {
+    display:flex;
+    gap: 10px;
+
+}
 }
