@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bistro Elegante - Fine Dining Experience</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header styles - BROKEN FLEXBOX */
+        header {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 1rem;
+            display: flex; /* Flexbox used but with issues */
+            flex-direction: column; /* Should be row for horizontal layout */
+            align-items: flex-start; /* Should be center */
+            justify-content: start; /* Should be space-between */
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem; /* Creates spacing issue */
+        }
+
+        /* Navigation - BROKEN FLEXBOX */
+        nav ul {
+            list-style: none;
+            display: flex; /* Flexbox used */
+            flex-wrap: nowrap; /* Should be wrap for mobile */
+            gap: 0; /* Should have gap for spacing */
+        }
+
+        nav ul li {
+            margin-left: 0; /* No spacing between items */
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem; /* Not enough padding */
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #f1c40f;
+        }
+
+        /* Hero section - BROKEN FLEXBOX */
+        .hero {
+            height: 400px;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/api/placeholder/1200/400') center/cover no-repeat;
+            color: #fff;
+            display: flex;
+            flex-direction: row; /* Should be column */
+            justify-content: center;
+            align-items: flex-start; /* Should be center */
+            text-align: left; /* Should be center */
+            padding: 2rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Menu section - BROKEN FLEXBOX */
+        .menu-section {
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: row; /* Should be wrap */
+            flex-wrap: nowrap; /* Should be wrap */
+            justify-content: center;
+            gap: 0rem; /* Should have gap */
+            margin: 0 auto;
+            max-width: 1200px;
+            overflow-x: scroll; /* Shouldn't need this */
+        }
+
+        .menu-item {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin: 0; /* Should have margin */
+            width: 300px;
+            flex-shrink: 0; /* Should be able to shrink */
+        }
+
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .menu-item h3 {
+            margin: 1rem 0;
+            color: #2c3e50;
+        }
+
+        .menu-item p {
+            margin-bottom: 1rem;
+            color: #7f8c8d;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 1.2rem;
+        }
+
+        /* About section */
+        .about-section {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        .about-section .section-title {
+            color: #fff;
+        }
+
+        /* Contact section - BROKEN FLEXBOX */
+        .contact-section {
+            padding: 3rem 1rem;
+        }
+
+        .contact-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-info, .contact-form {
+            padding: 1rem;
+            width: 100%; /* Should be ~50% */
+        }
+
+        .contact-form form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column; 
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        /* Footer - BROKEN FLEXBOX */
+        footer {
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: row; /* Should be column */
+            gap: 0rem; /* Should have gap */
+        }
+
+        .footer-content, .copyright {
+            margin: 0; /* Should have margin */
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: left; /* Should be center */
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        /* Media queries - MISSING OR INCORRECT */
+        @media (max-width: 768px) {
+            /* Missing responsive styles that should fix some flexbox issues */
+            header {
+                /* Should change to column layout properly */
+            }
+            
+            .menu-items {
+                /* Should adjust for mobile */
+            }
+            
+            .contact-container {
+                /* Should adjust for mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Bistro Elegante</div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#reservations">Reservations</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Experience Fine Dining</h1>
+            <p>Indulge in exceptional cuisine, elegant atmosphere, and impeccable service.</p>
+            <a href="#reservations" class="btn">Make a Reservation</a>
+        </div>
+    </section>
+
+    <section id="menu" class="menu-section">
+        <h2 class="section-title">Our Menu</h2>
+        <div class="menu-items">
+            <div class="menu-item">
+                <img src="/api/placeholder/300/200" alt="Grilled Salmon">
+                <h3>Grilled Salmon</h3>
+                <p>Fresh Atlantic salmon with lemon-dill sauce, served with seasonal vegetables.</p>
+                <p class="price">$28.95</p>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/300/200" alt="Filet Mignon">
+                <h3>Filet Mignon</h3>
+                <p>Prime cut beef tenderloin, garlic butter, truffle mashed potatoes.</p>
+                <p class="price">$34.95</p>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/300/200" alt="Mushroom Risotto">
+                <h3>Mushroom Risotto</h3>
+                <p>Creamy Arborio rice with wild mushrooms, white wine, and Parmesan.</p>
+                <p class="price">$22.95</p>
+            </div>
+            <div class="menu-item">
+                <img src="/api/placeholder/300/200" alt="Duck Confit">
+                <h3>Duck Confit</h3>
+                <p>Slow-cooked duck leg with orange glaze and roasted root vegetables.</p>
+                <p class="price">$30.95</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <h2 class="section-title">About Bistro Elegante</h2>
+        <p>Founded in 2010, Bistro Elegante brings the finest culinary experiences to your table. Our chef, with over 20 years of experience in Michelin-starred restaurants, crafts each dish with passion and precision.</p>
+        <p>We source our ingredients locally whenever possible, supporting sustainable farming and providing the freshest flavors.</p>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <h2 class="section-title">Contact Us</h2>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Visit Us</h3>
+                <p>39 Regent Street</p>
+                <p>Culinary District</p>
+                <p>Chippendale, NSW 2008</p>
+                <h3>Hours</h3>
+                <p>Tuesday - Sunday: 5:00 PM - 10:00 PM</p>
+                <p>Closed on Mondays</p>
+                <h3>Call Us</h3>
+                <p>(+61) 123-4567</p>
+            </div>
+            <div class="contact-form">
+                <h3>Send a Message</h3>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="reservations" class="contact-section">
+        <h2 class="section-title">Make a Reservation</h2>
+        <div class="contact-container">
+            <div class="contact-form">
+                <form id="reservationForm">
+                    <div class="form-group">
+                        <label for="res-name">Name</label>
+                        <input type="text" id="res-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-email">Email</label>
+                        <input type="email" id="res-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-phone">Phone</label>
+                        <input type="tel" id="res-phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-date">Date</label>
+                        <input type="date" id="res-date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-time">Time</label>
+                        <input type="time" id="res-time" name="time" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-guests">Number of Guests</label>
+                        <input type="number" id="res-guests" name="guests" min="1" max="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-notes">Special Requests</label>
+                        <textarea id="res-notes" name="notes" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn">Request Reservation</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Bistro Elegante. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // BROKEN JAVASCRIPT
+        // Form submission handler - doesn't prevent default action
+        document.getElementById('contactForm').addEventListener('submit', function() {
+            // Should have event parameter and preventDefault()
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            // Missing validation
+            
+            alert('Thank you for your message. We will contact you soon!');
+            // Should reset the form
+        });
+
+        // Reservation form - broken validation
+        document.getElementById('reservationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('res-name').value;
+            const email = document.getElementById('res-email').value;
+            const date = document.getElementById('res-date').value;
+            const time = document.getElementById('res-time').value;
+            const guests = document.getElementById('res-guests').value;
+            
+            // Broken validation - doesn't correctly check all fields
+            if (name = "") { // Incorrect comparison operator (= instead of ==)
+                alert('Please enter your name');
+                return false;
+            }
+            
+            // Missing email validation
+            
+            // Date validation incorrectly implemented
+            const today = new Date();
+            const selectedDate = new Date(date);
+            // Missing proper date comparison
+            
+            alert('Thank you for your reservation request. We will confirm shortly!');
+            // Missing form reset
+        });
+
+        // Broken menu filter functionality
+        function filterMenu(category) {
+            // This function is called but never defined properly
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                // Missing proper filtering logic
+            });
+        }
+
+        // Broken scroll functionality
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                // Incorrect selector that doesn't work
+                const targetSection = document.querySelector(targetId);
+                
+                // Missing smooth scroll implementation
+                // window.scrollTo({...})
+            });
+        });
+
+        // Broken mobile menu toggle functionality
+        // Missing mobile menu button and functionality
+    </script>
+</body>
+</html>
