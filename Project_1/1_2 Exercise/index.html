@@ -104,12 +104,14 @@
 
         /* Menu section - BROKEN FLEXBOX */
         .menu-section {
-            padding: 3rem 1rem;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
         }
 
         .section-title {
+            text-align: center; /*Added center */
             font-size: 2rem;
+            margin-top: 2rem; /*Added top padding */
             margin-bottom: 2rem;
             color: #2c3e50;
         }
