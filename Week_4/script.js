@@ -11,10 +11,18 @@ function greetUser() {
 document.addEventListener("DOMContentLoaded", greetUser);
 
 //DOM Manipulation
-let button = document.getElementById("changeText");
+let menu = document.getElementById("changeText");
 let text = document.getElementById("text");
 
-button.addEventListener("click", function() {
+menu.addEventListener("click", function() {
     text.textContent = "You clicked the button!";
     text.classList.toggle('text_colour_toggle');
 });
+
+//Toggleable navigation 
+let nav_button = document.getElementById("hamburger_menu")
+let navigation_menu = document.getElementById("links")
+
+nav_button.addEventListener("click", function() {
+    navigation_menu.classList.toggle('collapsible');
+})
