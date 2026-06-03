@@ -118,13 +118,14 @@
 
         .menu-items {
             display: flex;
-            flex-direction: row; /* Should be wrap */
-            flex-wrap: nowrap; /* Should be wrap */
+            flex-direction: wrap; /* Should be wrap */
+            flex-wrap: wrap; /* Should be wrap */
             justify-content: center;
-            gap: 0rem; /* Should have gap */
+            gap: 10px; /* Changed from 0 rem to 10px */
             margin: 0 auto;
+            margin-bottom: 20px; /* Added margin gap */
             max-width: 1200px;
-            overflow-x: scroll; /* Shouldn't need this */
+            /*overflow-x: scroll;*/ /* removes this scroll bar */
         }
 
         .menu-item {
