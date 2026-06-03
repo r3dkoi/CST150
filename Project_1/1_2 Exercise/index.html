@@ -175,7 +175,8 @@
 
         /* Contact section - BROKEN FLEXBOX */
         .contact-section {
-            padding: 3rem 1rem;
+            display: flex;
+            flex-direction: column; /* Added flexbox styling to have it stack atop each other */
         }
 
         .contact-container {
@@ -188,7 +189,7 @@
 
         .contact-info, .contact-form {
             padding: 1rem;
-            width: 100%; /* Should be ~50% */
+            width: 100%; /* Should be ~50% It's so ugly though! */ 
         }
 
         .contact-form form {
@@ -221,17 +222,17 @@
             text-align: center;
             padding: 1.5rem;
             display: flex;
-            flex-direction: row; /* Should be column */
-            gap: 0rem; /* Should have gap */
+            flex-direction: column; /* Should be column */
+            gap: 1rem; /* Changed from 0rem to 1rem */
         }
 
         .footer-content, .copyright {
-            margin: 0; /* Should have margin */
+            margin: 1rem auto; /* Changed from 0rem to 1rem auto */
         }
 
         .social-links {
             display: flex;
-            justify-content: left; /* Should be center */
+            justify-content: center; /* Should be center */
             gap: 1rem;
             margin: 1rem 0;
         }
@@ -246,15 +247,19 @@
         @media (max-width: 768px) {
             /* Missing responsive styles that should fix some flexbox issues */
             header {
+                flex-direction: column;
                 /* Should change to column layout properly */
             }
             
             .menu-items {
                 /* Should adjust for mobile */
+                flex-direction: column;
             }
             
             .contact-container {
                 /* Should adjust for mobile */
+                width: 100%;
+                align-items: center;
             }
         }
     </style>
