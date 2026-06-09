@@ -30,7 +30,7 @@ nav ul {
 }
 
 #hamburger_menu {
-    display: block;
+    display: none;
     margin: 0 auto;
 }
 nav a {
@@ -65,15 +65,17 @@ nav a {
 }
 
 @media (max-width: 600px) {
+    #hamburger_menu {
+        display: block;
+    }
     nav ul {
         flex-direction: column;
         align-items: center;
-        display: none; 
+        display: none;
     }
     /* Collapsing navigation */
     .collapsible {
-    display:flex;
-    gap: 10px;
-
-}
+        display: flex;
+        gap: 10px;
+    }
 }
