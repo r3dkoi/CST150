@@ -20,6 +20,14 @@ h1, h2, h3 {
     color: #0056b3;
 }
 
+a {
+    color: #ff6600;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
 
 header { grid-area: header; background: #333; color: white;
 padding: 20px; text-align: center; }
