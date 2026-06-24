@@ -88,7 +88,8 @@ def view_menu():
     return render_template('menu.html', menu=menu)
 
 # Bug: This route has a typo in path - should be '/menu/add'
-@app.route('/meu/add', methods=['GET', 'POST'])
+# Bugfix: Fixed typo of menu
+@app.route('/menu/add', methods=['GET', 'POST'])
 def add_menu_item():
     if request.method == 'POST':
         # Bug: Missing category validation
@@ -151,18 +152,19 @@ def edit_menu_item(item_id):
     return render_template('edit_menu_item.html', item=item)
 
 # Bug: This route is completely missing
-# @app.route('/menu/delete/<int:item_id>')
-# def delete_menu_item(item_id):
-#     # Find and remove the item
-#     for cat in menu:
-#         for i in range(len(menu[cat])):
-#             if menu[cat][i]['id'] == item_id:
-#                 menu[cat].pop(i)
-#                 save_data('menu', menu)
-#                 return redirect(url_for('view_menu'))
-#     
-#     flash('Item not found')
-#     return redirect(url_for('view_menu'))
+# Bugfix: Uncommented; if user tried to delete a menu item, Flask would throw a BuildError when rendering the delete menu template. Or a 404 if a user types the delete url.
+@app.route('/menu/delete/<int:item_id>')
+def delete_menu_item(item_id):
+    # Find and remove the item
+    for cat in menu:
+        for i in range(len(menu[cat])):
+            if menu[cat][i]['id'] == item_id:
+                menu[cat].pop(i)
+                save_data('menu', menu)
+                return redirect(url_for('view_menu'))
+    
+    flash('Item not found')
+    return redirect(url_for('view_menu'))
 
 # Order routes
 @app.route('/orders')
@@ -193,7 +195,8 @@ def new_order():
         save_data('orders', orders)
         
         # Bug: Incorrect redirect
-        return redirect('/order/' + str(new_order['id']))
+        #Bug fix, replaced it with url_for() instead of string concat. User will now be redirected to the order they just made page.
+        return redirect(url_for('view_order', order_id=new_order['id']))
     
     return render_template('new_order.html')
 
