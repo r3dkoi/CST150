@@ -68,6 +68,44 @@ nav a {
     color: red;
 }
 
+button {
+background: #0056b3;
+color: white;
+padding: 10px 20px;
+border: none;
+cursor: pointer;
+transition: background 0.3s ease-in-out;
+}
+
+button:hover {
+background: #003d82;
+}
+
+
+
+/*SECTIONS & CONTAINERS */
+
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 20px;
+}
+
+section {
+margin-bottom: 40px;
+padding: 20px;
+background: white;
+border-radius: 8px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+section {
+animation: fadeIn 1s ease-in-out;
+} /*This adds a fadein effect when user first enters the site
 
 /* MEDIA QUERY - OVERRIDES CHANGES ON SMALL SCREENS */
 @media (max-width: 768px) {
