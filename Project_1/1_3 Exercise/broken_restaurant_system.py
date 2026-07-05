@@ -99,11 +99,12 @@ def add_menu_item():
     if request.method == 'POST':
         # Bug: Missing category validation
         category = request.form.get('category')
-        name = request.form.get('name')
-        #Bug fix: convert it into a float
-        price = float(request.form.get('price'))
+        if category in menu:
+            name = request.form.get('name')
+            # Bug: No validation for price being a number
+            #Bug fix: convert it into a float
+            price = float(request.form.get('price'))
         
-        # Bug: No validation for price being a number
         
         # Generate new ID (bug: doesn't check existing IDs)
         new_id = len(menu['appetizers']) + len(menu['main_courses']) + len(menu['desserts']) + len(menu['drinks']) + 1
@@ -123,6 +124,9 @@ def add_menu_item():
         save_data('menu', menu)
         
         return redirect(url_for('view_menu'))
+    else:
+        flash('Category not found')
+        return redirect(url_for('add_menu_item'))
     
     return render_template('add_menu_item.html')
 
