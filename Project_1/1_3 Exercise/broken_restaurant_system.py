@@ -107,7 +107,8 @@ def add_menu_item():
             'id': new_id,
             'name': name,
             # Bug: Doesn't convert price to float
-            'price': price,
+            #Bug fix: convert it into a float so during math calculations it doesn't come up as a erorr
+            'price': float(price),
             'category': category
         })
         
@@ -141,7 +142,8 @@ def edit_menu_item(item_id):
         # Bug: Missing validation
         item['name'] = request.form.get('name')
         # Bug: Doesn't convert price to float
-        item['price'] = request.form.get('price')
+        #Bug fix: convert it into a float
+        item['price'] = float(request.form.get('price'))
         
         # Bug: Missing save to file
         # Bugfix: Uncommented save_data function from Line 71
