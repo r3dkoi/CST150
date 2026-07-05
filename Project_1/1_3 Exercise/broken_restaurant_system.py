@@ -342,6 +342,7 @@ def view_bill(order_id):
         total += item['price'] * item['quantity']
     
     # Bug: Doesn't update order total
+    # Bugfix: Intentional commented, as total should be added only when adding/removing, not recalculated at bill
     # order['total'] = total
     
     # Bug: Tax calculation is incorrect
