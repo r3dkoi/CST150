@@ -26,10 +26,12 @@ ORDERS_FILE = 'orders.json'
 # Initialize data storage
 def initialize_data():
     # Bug: This function doesn't check if files exist before loading
-    try:
+    # Bugfix: changed it from a try-except, to a if-else. Using a bare except will catch all errors, even if the file does exist! 
+    #So it won't crash with a useful error, it'll just create the fresh default menu, without us knowing if any data is lost.
+    if os.path.exists(MENU_FILE):
         with open(MENU_FILE, 'r') as f:
             menu = json.load(f)
-    except:
+    else:
         # Default menu if file doesn't exist
         menu = {
             'appetizers': [
@@ -49,6 +51,7 @@ def initialize_data():
                 {'id': 8, 'name': 'Coffee', 'price': 3.49, 'category': 'drinks'}
             ]
         }
+
         with open(MENU_FILE, 'w') as f:
             json.dump(menu, f)
     
