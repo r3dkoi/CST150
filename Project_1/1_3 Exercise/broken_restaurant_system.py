@@ -95,7 +95,8 @@ def add_menu_item():
         # Bug: Missing category validation
         category = request.form.get('category')
         name = request.form.get('name')
-        price = request.form.get('price')
+        #Bug fix: convert it into a float
+        price = float(request.form.get('price'))
         
         # Bug: No validation for price being a number
         
