@@ -89,7 +89,7 @@ def home():
 def view_menu():
     # Bug: Doesn't refresh menu data from file
     # Bug fix: Call initialise data function to refresh menu data from file
-    initialize_data()
+    menu, orders = initialize_data()
     return render_template('menu.html', menu=menu)
 
 # Bug: This route has a typo in path - should be '/menu/add'
@@ -179,7 +179,7 @@ def delete_menu_item(item_id):
 def view_orders():
     # Bug: Doesn't refresh orders data from file
     # Bug fix: Call initialise data function to refresh menu data from file
-    initialize_data()
+    menu, orders = initialize_data()
     return render_template('orders.html', orders=orders)
 
 @app.route('/order/new', methods=['GET', 'POST'])
