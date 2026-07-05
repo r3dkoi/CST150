@@ -346,9 +346,11 @@ def view_bill(order_id):
     # order['total'] = total
     
     # Bug: Tax calculation is incorrect
+    # Bugfix: Tax calculation IS correct but is just missing the grand total that the user can see to pay
     tax = total * 0.1  # 10% tax
+    grand_total = total + tax
     
-    return render_template('bill.html', order=order, tax=tax, total=total)
+    return render_template('bill.html', order=order, tax=tax, total=total, grand_total=grand_total)
 
 # Run the application
 if __name__ == '__main__':
