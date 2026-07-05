@@ -259,7 +259,8 @@ def add_item_to_order(order_id):
     })
     
     # Bug: Doesn't update order total
-    # order['total'] += item['price'] * quantity
+    # Bugfix: Uncommented so the total can change instead of remaining 0.
+    order['total'] += item['price'] * quantity
     
     # Bug: Doesn't save updated orders to file
     # Bugfix: Uncommented save_data function from Line 71
@@ -282,8 +283,9 @@ def remove_item_from_order(order_id, item_index):
     
     # Bug: No bounds checking
     # Bug: Doesn't update order total
-    # subtotal = order['items'][item_index]['subtotal']
-    # order['total'] -= subtotal
+    # Bugfix: Uncommented so the total can change instead of remaining 0.
+    subtotal = order['items'][item_index]['subtotal']
+    order['total'] -= subtotal
     
     # Remove item
     # Bug: Incorrect list indexing
