@@ -287,7 +287,9 @@ def remove_item_from_order(order_id, item_index):
     
     # Remove item
     # Bug: Incorrect list indexing
-    order['items'].remove(item_index)
+    #Bug fix: Used .pop() as of .remove(). .remove() expects integers, not a list value and will come up as ValueError.
+    #  while .pop() requires a list value. 
+    order['items'].pop(item_index)
     
     # Bug: Doesn't save updated orders to file
     # Bugfix: Uncommented save_data function from Line 71
