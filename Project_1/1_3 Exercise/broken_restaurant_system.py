@@ -55,10 +55,10 @@ def initialize_data():
         with open(MENU_FILE, 'w') as f:
             json.dump(menu, f)
     
-    try:
+    if os.path.exists(ORDERS_FILE):
         with open(ORDERS_FILE, 'r') as f:
             orders = json.load(f)
-    except:
+    else:
         # Default empty orders if file doesn't exist
         orders = []
         with open(ORDERS_FILE, 'w') as f:
