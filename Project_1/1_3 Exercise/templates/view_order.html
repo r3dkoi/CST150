@@ -38,6 +38,7 @@
                                 <td>${{ item.subtotal }}</td>
                                 <td>
                                     <!-- Bug: Incorrect parameter (item_index vs item ID) -->
+                                     <!-- Bugfix: Fixed in python file -->
                                     <a href="{{ url_for('remove_item_from_order', order_id=order.id, item_index=loop.index0) }}" class="btn btn-sm btn-danger">Remove</a>
                                 </td>
                             </tr>
