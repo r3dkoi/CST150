@@ -360,6 +360,12 @@ def close_order(order_id):
         return redirect(url_for('view_orders'))
     
     # Bug: Doesn't recalculate total before closing
+    total = 0
+    for item in order['items']:
+        # Bug: Doesn't check if keys exist
+        #Bug fix: Checks if keys exist, and if they don't they return None and doesn't crash program
+        total += item('price', 0) * item.get('quantity', 0)
+    order['total'] = total
     order['status'] = 'closed'
     
     # Bug: Doesn't save updated orders to file
@@ -386,7 +392,9 @@ def view_bill(order_id):
     total = 0
     for item in order['items']:
         # Bug: Doesn't check if keys exist
-        total += item['price'] * item['quantity']
+        #Bug fix: Checks if keys exist, and if they don't they return None and doesn't crash program
+        total += item('price', 0) * item.get('quantity', 0)
+        
     
     # Bug: Doesn't update order total
     # Bugfix: Intentional commented, as total should be added only when adding/removing, not recalculated at bill
