@@ -435,7 +435,7 @@
             const guests = document.getElementById('res-guests').value;
             
             // Broken validation - doesn't correctly check all fields
-            if (name = "") { // Incorrect comparison operator (= instead of ==)
+            if (name == "") { // Incorrect comparison operator (= instead of ==)
                 alert('Please enter your name');
                 return false;
             }

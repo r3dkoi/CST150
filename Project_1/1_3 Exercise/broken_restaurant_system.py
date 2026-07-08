@@ -119,7 +119,7 @@ def add_menu_item():
             menu[category].append({
                 'id': new_id,
                 'name': name,
-                # Bug: Doesn't convert price to float
+                #Bug: Doesn't convert price to float
                 #Bug fix: convert it into a float so during math calculations it doesn't come up as a erorr
                 'price': float(price),
                 'category': category
