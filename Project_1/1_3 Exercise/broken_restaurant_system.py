@@ -360,11 +360,12 @@ def close_order(order_id):
         return redirect(url_for('view_orders'))
     
     # Bug: Doesn't recalculate total before closing
+    # Bugfix: Recalculates total before closing order 
     total = 0
     for item in order['items']:
         # Bug: Doesn't check if keys exist
         #Bug fix: Checks if keys exist, and if they don't they return None and doesn't crash program
-        total += item('price', 0) * item.get('quantity', 0)
+        total += item.get('price', 0) * item.get('quantity', 0)
     order['total'] = total
     order['status'] = 'closed'
     
@@ -393,7 +394,7 @@ def view_bill(order_id):
     for item in order['items']:
         # Bug: Doesn't check if keys exist
         #Bug fix: Checks if keys exist, and if they don't they return None and doesn't crash program
-        total += item('price', 0) * item.get('quantity', 0)
+        total += item.get('price', 0) * item.get('quantity', 0)
         
     
     # Bug: Doesn't update order total
