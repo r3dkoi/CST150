@@ -219,7 +219,8 @@ def new_order():
             'items': [],
             'status': 'open',
             # Bug: Wrong date format
-            'timestamp': str(datetime.now()),
+            # Bugfix: Formatted with correct date template
+            'timestamp': datetime.now().strftime('%d/%m/%Y, %H:%M:%S'),
             'total': 0
         }
         
@@ -251,10 +252,6 @@ def view_order(order_id):
 
 @app.route('/order/<int:order_id>/add_item', methods=['POST'])
 def add_item_to_order(order_id):
-    # Bug: Missing checking if order exists
-    item_id = int(request.form.get('item_id'))
-    quantity = int(request.form.get('quantity', 1))
-    
     # Find the order
     order = None
     for o in orders:
@@ -265,6 +262,11 @@ def add_item_to_order(order_id):
     if order is None:
         flash('Order not found')
         return redirect(url_for('view_orders'))
+    
+     # Bug: Missing checking if order exists
+     # Bugfix: Moved it below the item checking validation, so it only triggers once data is found that the order actually exists
+    item_id = int(request.form.get('item_id'))
+    quantity = int(request.form.get('quantity', 1))
     
     # Find the menu item
     item = None
@@ -280,14 +282,23 @@ def add_item_to_order(order_id):
     
     # Add item to order
     # Bug: Doesn't check if item already exists in order to update quantity
-    order['items'].append({
-        'id': item['id'],
-        'name': item['name'],
-        'price': item['price'],
-        'quantity': quantity,
-        # Bug: Incorrect calculation
-        'subtotal': item['price'] * quantity
-    })
+    # Bugfix: Added loop that adds the price of a duplicated item to the order 
+    for order_item in order['items']:
+        if order_item['id'] == item_id:
+            order_item['quantity'] += quantity
+            subtotal = order_item['price'] *  order_item['quantity']
+            order_item['subtotal'] = subtotal
+            break
+    else: 
+        order['items'].append({
+            'id': item['id'],
+            'name': item['name'],
+            'price': item['price'],
+            'quantity': quantity,
+            # Bug: Incorrect calculation
+            #Bug fix: Correct calculation for a fresh new entry order
+            'subtotal': item['price'] * quantity
+            })
     
     # Bug: Doesn't update order total
     # Bugfix: Uncommented so the total can change instead of remaining 0.
@@ -312,7 +323,6 @@ def remove_item_from_order(order_id, item_index):
         flash('Order not found')
         return redirect(url_for('view_orders'))
     
-    # Bug: No bounds checking
     # Bug: Doesn't update order total
     # Bugfix: Uncommented so the total can change instead of remaining 0.
     subtotal = order['items'][item_index]['subtotal']
@@ -322,7 +332,13 @@ def remove_item_from_order(order_id, item_index):
     # Bug: Incorrect list indexing
     #Bug fix: Used .pop() as of .remove(). .remove() expects integers, not a list value and will come up as ValueError.
     #  while .pop() requires a list value. 
-    order['items'].pop(item_index)
+    # Bug: No bounds checking
+    #Bug fix: Checks if user tries to remove an item from their order but item isn't actually in their order.
+    if 0 <= item_index < len(order['items']):
+        order['items'].pop(item_index)
+    else:
+        flash('Item does not exist.')
+        return redirect(url_for('view_order', order_id=order_id))
     
     # Bug: Doesn't save updated orders to file
     # Bugfix: Uncommented save_data function from Line 71
