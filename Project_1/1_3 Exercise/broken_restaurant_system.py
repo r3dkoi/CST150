@@ -220,7 +220,7 @@ def new_order():
             'status': 'open',
             # Bug: Wrong date format
             # Bugfix: Formatted with correct date template
-            'timestamp': datetime.now().strftime('%d/%m/%Y, %H:%M:%S'),
+            'timestamp': datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
             'total': 0
         }
         
