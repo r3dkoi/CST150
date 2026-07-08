@@ -390,6 +390,7 @@ def view_bill(order_id):
     
     # Bug: Total calculation is missing or incorrect
     # Calculate total (bug: should be done when adding/removing items)
+    #Bug fix: Fixed using .get()
     total = 0
     for item in order['items']:
         # Bug: Doesn't check if keys exist
