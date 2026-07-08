@@ -161,10 +161,15 @@ def edit_menu_item(item_id):
     
     if request.method == 'POST':
         # Bug: Missing validation
+        #Bug fix: included try-except value error handling
         item['name'] = request.form.get('name')
         # Bug: Doesn't convert price to float
         #Bug fix: convert it into a float
-        item['price'] = float(request.form.get('price'))
+        try:
+            item['price'] = float(request.form.get('price'))
+        except ValueError:
+            flash('Invalid price, please enter a number only.')
+            return redirect(url_for('edit_menu_item', item_id=item_id))
         
         # Bug: Missing save to file
         # Bugfix: Uncommented save_data function from Line 71
@@ -201,7 +206,11 @@ def view_orders():
 def new_order():
     if request.method == 'POST':
         # Bug: Missing form validation
+        # Bugfix: Added validation if table number is left empty
         table_number = request.form.get('table_number')
+        if not table_number:
+            flash('This table number does not exist. Please input a valid table number.')
+            return redirect(url_for('new_order'))
         
         # Create new order
         new_order = {
