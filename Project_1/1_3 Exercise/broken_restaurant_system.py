@@ -98,36 +98,42 @@ def view_menu():
 def add_menu_item():
     if request.method == 'POST':
         # Bug: Missing category validation
+        # Bugfix:Included if-else validation, where invalid category flashes an error and redirects back to this menu. 
         category = request.form.get('category')
         if category in menu:
             name = request.form.get('name')
             # Bug: No validation for price being a number
+            #Bug fix: Inserted try-except error handling in-case user inputs a letters instead of numbers
             #Bug fix: convert it into a float
-            price = float(request.form.get('price'))
-        
-        
-        # Generate new ID (bug: doesn't check existing IDs)
-        new_id = len(menu['appetizers']) + len(menu['main_courses']) + len(menu['desserts']) + len(menu['drinks']) + 1
-        
-        # Bug: Incorrectly adds item to menu
-        menu[category].append({
-            'id': new_id,
-            'name': name,
-            # Bug: Doesn't convert price to float
-            #Bug fix: convert it into a float so during math calculations it doesn't come up as a erorr
-            'price': float(price),
-            'category': category
-        })
-        
-        # Bug: Doesn't save updated menu to file
-        # Bugfix: Uncommented save_data function from Line 71
-        save_data('menu', menu)
-        
-        return redirect(url_for('view_menu'))
-    else:
-        flash('Category not found')
-        return redirect(url_for('add_menu_item'))
-    
+            try:
+                price = float(request.form.get('price'))
+            except ValueError as e:
+                flash(f'Invalid price, please enter a number only.')
+                return redirect(url_for('add_menu_item'))
+
+            # Generate new ID (bug: doesn't check existing IDs)
+            # Changed code to find highest existing IDs and add's 1, as previous one would provude duplicate IDs after deletions.
+            new_id = max([i['id'] for category in menu for i in menu[category]]) + 1
+
+            # Bug: Incorrectly adds item to menu
+            menu[category].append({
+                'id': new_id,
+                'name': name,
+                # Bug: Doesn't convert price to float
+                #Bug fix: convert it into a float so during math calculations it doesn't come up as a erorr
+                'price': float(price),
+                'category': category
+            })
+
+            # Bug: Doesn't save updated menu to file
+            # Bugfix: Uncommented save_data function from Line 71
+            save_data('menu', menu)
+
+            return redirect(url_for('view_menu'))
+        else:
+            flash('Category not found')
+            return redirect(url_for('add_menu_item'))
+
     return render_template('add_menu_item.html')
 
 @app.route('/menu/edit/<int:item_id>', methods=['GET', 'POST'])
