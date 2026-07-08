@@ -143,12 +143,17 @@ def edit_menu_item(item_id):
     category = None
     
     # Bug: Inefficient search algorithm
+    #Bug fix: Adds breaks to outer loop as well so category (as previously) search stops searching despite already finding the ID
+    found = False
     for cat in menu:
         for i in menu[cat]:
             if i['id'] == item_id:
                 item = i
                 category = cat
+                found = True
                 break
+        if found:
+            break 
     
     if item is None:
         flash('Item not found')
