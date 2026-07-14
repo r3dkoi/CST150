@@ -16,10 +16,10 @@ app.config['MYSQL_DATABASE_HOST'] = os.getenv('DB_HOST', 'localhost')
 mysql.init_app(app)
 
 # Helper function with SQL injection vulnerability
-def execute_query(query):
+def execute_query(query, params=None):
     conn = mysql.connect()
     cursor = conn.cursor()
-    #Bugfix: Now accepts params
+    #Security fix: Accepts params for safe, paramterised queries
     cursor.execute(query, params)
     data = cursor.fetchall()
     conn.close()
@@ -28,8 +28,9 @@ def execute_query(query):
 # Route with insecure direct object reference
 @app.route('/menu/<id>', methods=['GET'])
 def get_menu_item(id):
-    query = f"SELECT * FROM menu_items WHERE id = {id}"
-    item = execute_query(query)
+    #Security fix: Value passed separately and not concatenated into query string, prevents SQL injection
+    query = "SELECT * FROM menu_items WHERE id = %s"
+    item = execute_query(query, (id,))
     return jsonify(item)
 
 # Route with missing error handling
