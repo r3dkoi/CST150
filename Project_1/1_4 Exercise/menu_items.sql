@@ -1,0 +1,16 @@
+INSERT INTO menu_items (item_id, name, category, price, is_vegetarian) VALUES
+(1, 'Margherita Pizza', 'Pizza', 12.99, 1),
+(2, 'Pepperoni Pizza', 'Pizza', 14.99, 0),
+(3, 'Veggie Burger', 'Burgers', 9.99, 1),
+(4, 'Cheeseburger', 'Burgers', 11.99, 0),
+(5, 'Caesar Salad', 'Salads', 8.99, 0),
+(6, 'Greek Salad', 'Salads', 9.99, 1),
+(7, 'Spaghetti Carbonara', 'Pasta', 13.99, 0),
+(8, 'Penne Arrabbiata', 'Pasta', 12.99, 1),
+(9, 'Chicken Wings', 'Appetizers', 7.99, 0),
+(10, 'Mozzarella Sticks', 'Appetizers', 6.99, 1),
+(11, 'Chocolate Cake', 'Desserts', 5.99, 1),
+(12, 'Tiramisu', 'Desserts', 6.99, 1),
+(13, 'Iced Tea', 'Beverages', 2.99, 1),
+(14, 'Lemonade', 'Beverages', 3.49, 1),
+(15, 'Beer', 'Beverages', 4.99, 1);

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Grid Layout</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>Responsive Header</header>
+    <nav>
+        <button id="hamburger_menu">☰</button>
+        <ul id ="links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <main>
+        <container>
+        <h1>Main Content</h1>
+        <section class="testing">
+            <p>Oh this section is pretty neat</p>
+        </section>
+        <section class="form-section">
+            <!--Form collects information from user -->
+            <p>This form just collects your name and email to confirm registration.</p>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="name">Student Name</label>
+                    <input 
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter your name"
+                    required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Student email</label>
+                    <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required 
+                    >
+                </div>
+
+                <button type="submit">Register</button>
+            </form>
+
+            <p id="authStatus" class="auth-status">
+                Registration status: Not completed
+            </p>
+
+            <p class="form-help">
+                Try submitting the form with empty fields first, JavaScript will storm the form and ask you to complete all the fields. After valid info is submitted, JavaScript saves the details and shwos authentication.
+            </p>
+        </section>
+        </container>
+    </main>
+    <aside>Sidebar
+        <p><button id="changeText">Click Me</button></p>
+        <p id="text">This text will change when you clicks the button</p>
+    </aside>
+    <footer>Footer</footer>
+</body>
+<script src="script.js"></script>
+</html>

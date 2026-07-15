@@ -23,7 +23,8 @@
         <div class="mb-3">
             <label for="price" class="form-label">Price</label>
             <!-- Bug: No type validation for price -->
-            <input type="text" class="form-control" id="price" name="price" required>
+             <!-- Bugfix: Included HTML validation to only allow numbers and not string/text -->
+            <input type="number" step="0.01" class="form-control" id="price" name="price" required>
         </div>
         <button type="submit" class="btn btn-primary">Add Item</button>
         <a href="{{ url_for('view_menu') }}" class="btn btn-secondary">Cancel</a>

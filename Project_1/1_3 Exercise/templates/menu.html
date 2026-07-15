@@ -29,7 +29,9 @@
                             {% for item in menu.appetizers %}
                             <tr>
                                 <td>{{ item.name }}</td>
-                                <td>${{ item.price }}</td>
+                                <!-- Bug: prices with a trailing zero (e.g. 3.20) display as 3.2 -->
+                                <!-- Bugfix: use "%.2f"|format() to force exactly 2 decimal places -->
+                                <td>${{ "%.2f"|format(item.price) }}</td>
                                 <td>
                                     <a href="{{ url_for('edit_menu_item', item_id=item.id) }}" class="btn btn-sm btn-primary">Edit</a>
                                     <!-- Bug: The delete route is missing -->
@@ -65,10 +67,13 @@
                             {% for item in menu.main_courses %}
                             <tr>
                                 <td>{{ item.name }}</td>
-                                <td>${{ item.price }}</td>
+                                <!-- Bug: prices with a trailing zero (e.g. 3.20) display as 3.2 -->
+                                <!-- Bugfix: use "%.2f"|format() to force exactly 2 decimal places -->
+                                <td>${{ "%.2f"|format(item.price) }}</td>
                                 <td>
                                     <a href="{{ url_for('edit_menu_item', item_id=item.id) }}" class="btn btn-sm btn-primary">Edit</a>
                                     <!-- Bug: The delete route is missing -->
+                                     <!-- Bugfix: Fixed in Python file -->
                                     <a href="{{ url_for('delete_menu_item', item_id=item.id) }}" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
@@ -100,10 +105,13 @@
                             {% for item in menu.desserts %}
                             <tr>
                                 <td>{{ item.name }}</td>
-                                <td>${{ item.price }}</td>
+                                <!-- Bug: prices with a trailing zero (e.g. 3.20) display as 3.2 -->
+                                <!-- Bugfix: use "%.2f"|format() to force exactly 2 decimal places -->
+                                <td>${{ "%.2f"|format(item.price) }}</td>
                                 <td>
                                     <a href="{{ url_for('edit_menu_item', item_id=item.id) }}" class="btn btn-sm btn-primary">Edit</a>
                                     <!-- Bug: The delete route is missing -->
+                                     <!-- Bugfix: Fixed in Python file -->
                                     <a href="{{ url_for('delete_menu_item', item_id=item.id) }}" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
@@ -135,10 +143,13 @@
                             {% for item in menu.drinks %}
                             <tr>
                                 <td>{{ item.name }}</td>
-                                <td>${{ item.price }}</td>
+                                <!-- Bug: prices with a trailing zero (e.g. 3.20) display as 3.2 -->
+                                <!-- Bugfix: use "%.2f"|format() to force exactly 2 decimal places -->
+                                <td>${{ "%.2f"|format(item.price) }}</td>
                                 <td>
                                     <a href="{{ url_for('edit_menu_item', item_id=item.id) }}" class="btn btn-sm btn-primary">Edit</a>
                                     <!-- Bug: The delete route is missing -->
+                                     <!-- Bugfix: Fixed in Python file -->
                                     <a href="{{ url_for('delete_menu_item', item_id=item.id) }}" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>

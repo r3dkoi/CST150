@@ -29,7 +29,8 @@ def execute_query(query, params=None):
 @app.route('/menu/<id>', methods=['GET'])
 def get_menu_item(id):
     #Security fix: Value passed separately and not concatenated into query string, prevents SQL injection
-    query = "SELECT * FROM menu_items WHERE id = %s"
+    query = "SELECT * FROM menu_items WHERE id = %s"\
+    #id passed as tuple to fill the %s placeholder safely
     item = execute_query(query, (id,))
     return jsonify(item)
 

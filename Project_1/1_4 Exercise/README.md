@@ -27,4 +27,17 @@ Steps taken to get VS Code able to run SQL queries against a local MySQL databas
   - Password mode: Ask upon connection
   - Authentication Protocol: default
   - SSL: Disabled
--
+
+GUIDES USED:
+1. https://www.w3schools.com/mysql/mysql_orderby.asp
+2. https://www.w3schools.com/sql/sql_where.asp
+3. https://www.w3schools.com/mySQL/func_mysql_date.asp
+4. https://www.w3schools.com/sql/func_mysql_year.asp
+5. https://www.w3schools.com/mysql/mysql_count.asp
+6. https://www.w3schools.com/MYSQL/mysql_between.asp
+7. https://www.w3schools.com/mysql/mysql_like.asp
+8. https://www.w3schools.com/mysql/mysql_limit.asp
+9. https://www.w3schools.com/mysql/mysql_avg.asp\
+10. https://www.w3schools.com/mysql/mysql_groupby.asp 
+11. https://www.w3schools.com/sql/func_mysql_curdate.asp
+12. https://www.w3schools.com/sql/func_mysql_date_sub.asp

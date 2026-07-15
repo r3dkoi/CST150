@@ -26,6 +26,7 @@
                             <td>{{ order.id }}</td>
                             <td>{{ order.table_number }}</td>
                             <!-- Bug: Timestamp format issue -->
+                             <!-- Bugfix: Fixed in Python file -->
                             <td>{{ order.timestamp }}</td>
                             <td>
                                 <a href="{{ url_for('view_order', order_id=order.id) }}" class="btn btn-sm btn-primary">View</a>
@@ -56,6 +57,7 @@
                             <td>{{ order.id }}</td>
                             <td>{{ order.table_number }}</td>
                             <!-- Bug: Timestamp format issue -->
+                             <!-- Bugfix: Fixed in Python file -->
                             <td>{{ order.timestamp }}</td>
                             <td>
                                 <a href="{{ url_for('view_bill', order_id=order.id) }}" class="btn btn-sm btn-info">Bill</a>

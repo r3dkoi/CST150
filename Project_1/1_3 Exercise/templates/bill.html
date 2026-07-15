@@ -29,13 +29,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in order.items %}
+                    <!-- Bug: order.items resolves to dict's built-in .items() method, not the 'items' key, causing a TypeError -->
+                    <!-- Bugfix: use order['items'] to explicitly grab the dict key -->
+                    {% for item in order['items'] %}
                     <tr>
                         <td>{{ item.name }}</td>
                         <td>${{ item.price }}</td>
                         <td>{{ item.quantity }}</td>
                         <!-- Bug: Potential incorrect subtotal display -->
-                        <td>${{ item.subtotal }}</td>
+                         <!-- Bugfix: HTML re-calculation done here too, supports the python file recalculation -->
+                        <td>${{ item.price * item.quantity | round(2) }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -50,16 +53,19 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-8 text-end">Subtotal:</div>
-                <div class="col-4">${{ total }}</div>
+                <div class="col-4">${{ total | round(2) }}</div>
             </div>
             <div class="row">
                 <div class="col-8 text-end">Tax (10%):</div>
-                <div class="col-4">${{ tax }}</div>
+                <!-- Bug: floating-point tax calculation shows extra decimal places (e.g. $27.944000000000003) -->
+                <!-- Bugfix: apply round(2) filter for clean currency display -->
+                <div class="col-4">${{ tax | round(2) }}</div>
             </div>
             <div class="row">
                 <div class="col-8 text-end"><strong>Total:</strong></div>
                 <!-- Bug: Potential incorrect total display -->
-                <div class="col-4"><strong>${{ total + tax }}</strong></div>
+                 <!-- Bugfix: Instead of total + tax, changed it to grand_total from Python file -->
+                <div class="col-4"><strong>${{ grand_total | round(2) }}</strong></div>
             </div>
         </div>
     </div>

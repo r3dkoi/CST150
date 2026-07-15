@@ -28,14 +28,16 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for item in order.items %}
+                        <tbody> 
+                            <!-- Bugfix: Grabs the dictionary data, originally had builtin_function_or_method error -->
+                            {% for item in order['items'] %}
                             <tr>
                                 <td>{{ item.name }}</td>
                                 <td>${{ item.price }}</td>
                                 <td>{{ item.quantity }}</td>
                                 <!-- Bug: Potential missing subtotal calculation -->
-                                <td>${{ item.subtotal }}</td>
+                                 <!-- Bugfix: Fixed with recalculating fresh -->
+                                <td>${{ item.quantity * item.price }}</td>
                                 <td>
                                     <!-- Bug: Incorrect parameter (item_index vs item ID) -->
                                      <!-- Bugfix: Fixed in python file -->

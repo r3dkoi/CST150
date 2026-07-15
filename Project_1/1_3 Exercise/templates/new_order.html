@@ -7,7 +7,8 @@
         <div class="mb-3">
             <label for="table_number" class="form-label">Table Number</label>
             <!-- Bug: No validation for table number -->
-            <input type="text" class="form-control" id="table_number" name="table_number" required>
+             <!-- Bugfix: Added HTML Validation and only allowing whole numbers -->
+            <input type="number" step="1" class="form-control" id="table_number" name="table_number" required>
         </div>
         <button type="submit" class="btn btn-primary">Create Order</button>
         <a href="{{ url_for('view_orders') }}" class="btn btn-secondary">Cancel</a>
