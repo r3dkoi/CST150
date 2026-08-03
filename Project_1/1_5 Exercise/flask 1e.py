@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flaskext.mysql import MySQL
 import os, logging, pymysql #Added logging and pymysql for the try-catch blocks
 from dotenv import load_dotenv
+from dbutils.pooled_db import PooledDB #Added to fix Connection pooling issue
 
 load_dotenv()
 
@@ -18,19 +19,37 @@ mysql.init_app(app)
 #For logging errors
 logger = logging.getLogger(__name__)
 
+#Repeated connection opening/closing fix
+pool = PooledDB (
+    creator=pymysql, #Driver used which DBUtils wraps 
+    maxconnections=10, #cap on total connections used in the pool
+    mincached=2, #Connections kept open & idle, ready to give to user(s)
+    host=os.getenv('DB_HOST', 'localhost'),
+    user=os.getenv('DB_USER', 'root'),
+    password=os.getenv('DB_PASS', ''),
+    database=os.getenv('DB_NAME', 'restaurant_db'),
+)
+
 # Helper function with SQL injection vulnerability
-def execute_query(query, params=None):
+def execute_query(query, params=None, return_id=False):
     conn = mysql.connect()
     #Added a try-catch block
     try:
         cursor = conn.cursor()
         #Security fix: Accepts params for safe, paramterised queries
         cursor.execute(query, params)
+        #required for INSERT/UPDATE/DELETE to actually persist
+        conn.commit()
+        #return_id added to fix "POST /order doesn't return the created order ID" (Functionality Bugs)
+        if return_id:
+            return cursor.lastrowid #id of the row just inserted, feature of pymysql, used to fix broken POST implementation 
         data = cursor.fetchall()
         return data
     #Only catches database-related errors this connection raises, more acurate than OSError
     except pymysql.err.Error as e: 
         logger.error(f"Database error: {e}")
+    #Discard any uncommitted changes on failure, particularly handles proper transaction handling for creating_orders
+        conn.rollback() 
         raise #Re-raise so calling route can build proper HTP error response
     finally:
         conn.close() 
@@ -72,8 +91,9 @@ def create_order():
         query = "INSERT INTO orders (customer_name) VALUES(%s)"
         #Input validation added, checks if user inputs a valid customer name
         if 'customer_name' in data:
-            execute_query(query, (data['customer_name'],))
-            return jsonify({"message": "Order created"}), 201
+            #return_id=True so we get the new order's id back to include in the response 
+            order_id = execute_query(query, (data['customer_name'],), return_id=True)
+            return jsonify({"message": "Order created", "order_id": order_id}), 201
         else:
             return jsonify({"error": "Please input a valid customer name"}), 400
     except pymysql.err.Error as e: 
@@ -109,6 +129,11 @@ def update_order(order_id):
     #Added try-catch block
     try:
         data = request.get_json()
+        #Input validation added, checks if order_id already exists in database
+        check_query = "SELECT * FROM orders WHERE id = %s"
+        existing_order = execute_query(check_query, (order_id,))
+        if not existing_order: 
+                return jsonify({"error": "Order not found."}), 404
         #Security fix: Status and order id is passed separtely, prevents SQL injection
         query = "UPDATE orders SET status = %s WHERE id = %s"
         #Input validation added, checks if user included status of order when checking for the specific order id
@@ -136,7 +161,7 @@ def add_menu_item():
             if field not in data:
                 missing.append(field)
 
-        #Decision happens once, after ALL four fields have been checked
+        #after ALL four fields have been checked, execute query
         if missing:
             return jsonify({"error": f"Missing required field(s): {', '.join(missing)}"}), 400
 
