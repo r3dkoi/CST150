@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flaskext.mysql import MySQL
 import os, logging, pymysql #Added logging and pymysql for the try-catch blocks
 from dotenv import load_dotenv
 from dbutils.pooled_db import PooledDB #Added to fix Connection pooling issue
@@ -7,14 +6,7 @@ from dbutils.pooled_db import PooledDB #Added to fix Connection pooling issue
 load_dotenv()
 
 app = Flask(__name__)
-mysql = MySQL()
-
-# Configuration with security issues
-app.config['MYSQL_DATABASE_USER'] = os.getenv('DB_USER', 'root')
-app.config['MYSQL_DATABASE_PASSWORD'] = os.getenv('DB_PASS', '')
-app.config['MYSQL_DATABASE_DB'] = os.getenv('DB_NAME', 'restaurant_db')
-app.config['MYSQL_DATABASE_HOST'] = os.getenv('DB_HOST', 'localhost')
-mysql.init_app(app)
+#flaskext.mysql's MySQL()/init_app(app) removed: pool below is now the sole connection source
 
 #For logging errors
 logger = logging.getLogger(__name__)
@@ -32,24 +24,20 @@ pool = PooledDB (
 
 # Helper function with SQL injection vulnerability
 def execute_query(query, params=None, return_id=False):
-    conn = mysql.connect()
+    conn = pool.connection() #Borrows a connection from the pol
     #Added a try-catch block
     try:
         cursor = conn.cursor()
-        #Security fix: Accepts params for safe, paramterised queries
-        cursor.execute(query, params)
-        #required for INSERT/UPDATE/DELETE to actually persist
-        conn.commit()
+        cursor.execute(query, params) #Security fix: Accepts params for safe, paramterised queries
+        conn.commit() #required for INSERT/UPDATE/DELETE to actually persist
         #return_id added to fix "POST /order doesn't return the created order ID" (Functionality Bugs)
         if return_id:
             return cursor.lastrowid #id of the row just inserted, feature of pymysql, used to fix broken POST implementation 
         data = cursor.fetchall()
         return data
-    #Only catches database-related errors this connection raises, more acurate than OSError
-    except pymysql.err.Error as e: 
+    except pymysql.err.Error as e:   #Only catches database-related errors this connection raises, more acurate than OSError
         logger.error(f"Database error: {e}")
-    #Discard any uncommitted changes on failure, particularly handles proper transaction handling for creating_orders
-        conn.rollback() 
+        conn.rollback()   #Discard any uncommitted changes on failure, particularly handles proper transaction handling for creating_orders
         raise #Re-raise so calling route can build proper HTP error response
     finally:
         conn.close() 
@@ -91,8 +79,7 @@ def create_order():
         query = "INSERT INTO orders (customer_name) VALUES(%s)"
         #Input validation added, checks if user inputs a valid customer name
         if 'customer_name' in data:
-            #return_id=True so we get the new order's id back to include in the response 
-            order_id = execute_query(query, (data['customer_name'],), return_id=True)
+            order_id = execute_query(query, (data['customer_name'],), return_id=True)  #return_id=True so we get the new order's id back to include in the response 
             return jsonify({"message": "Order created", "order_id": order_id}), 201
         else:
             return jsonify({"error": "Please input a valid customer name"}), 400
@@ -105,19 +92,29 @@ def create_order():
 def get_orders():
     #Added a try-catch block
     try:
-        query = "SELECT * FROM orders"
-        orders = execute_query(query)
-        
-        result = []
-        for order in orders:
-            #Security fix: order_id passed separately, prevents SQL injection
-            item_query = "SELECT * FROM order_items WHERE order_id = %s"
-            items = execute_query(item_query, (order[0],))
-            result.append({
-                "order": order,
-                "items": items
-            })
-        
+        query = """
+                SELECT orders.order_id, orders.customer_id, orders.staff_id, orders.order_date,
+                    orders.total_amount, order_details.quantity, order_details.subtotal
+                FROM orders
+                LEFT JOIN order_details ON orders.order_id = order_details.order_id
+                """
+        rows = execute_query(query)
+
+        orders_dict = {}
+        for row in rows:
+            order_id, customer_id, staff_id, order_date, total_amount, item_id, quantity, subtotal = row
+            
+            if order_id not in orders_dict:
+                orders_dict[order_id] = {
+                    "order": (order_id, customer_id, staff_id, order_date, total_amount),
+                    "items": []
+                }
+
+        #LEFT JOIN gives null item columns if order has no items & skips adding a fake item
+        if item_id is not None:
+            orders_dict[order_id]["items"].append((item_id, quantity, subtotal))
+
+        result = list(orders_dict.values())
         return jsonify(result)
     except pymysql.err.Error as e: 
         logger.error(f"Database error: {e}")
