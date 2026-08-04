@@ -2,12 +2,23 @@ from flask import Flask, request, jsonify
 import os, logging, pymysql #Added logging and pymysql for the try-catch blocks
 from dotenv import load_dotenv
 from dbutils.pooled_db import PooledDB #Added to fix Connection pooling issue
+from flask_httpauth import HTTPBasicAuth #Added for authorisation fix
 
 load_dotenv()
 
 app = Flask(__name__)
 #flaskext.mysql's MySQL()/init_app(app) removed: pool below is now the sole connection source
 
+#For authorisation
+auth = HTTPBasicAuth() #Reads/chercks authorisation header, and auto-returns 401 if it fails
+
+@auth.verify_password
+def verify_password(username, password): 
+     """ Upon successful return of username, access to route is granted. 
+     Returning none is access denial. """
+     if username == os.getenv('API_USER') and password == os.getenv('API_PASS'):
+          return username
+     
 #For logging errors
 logger = logging.getLogger(__name__)
 
@@ -24,6 +35,8 @@ pool = PooledDB (
 
 # Helper function with SQL injection vulnerability
 def execute_query(query, params=None, return_id=False):
+    """ Runs a parameterised query using a pooled connection, commits writes,
+    and returns either the new row's id (return_id=True) or the fetched rows. """
     conn = pool.connection() #Borrows a connection from the pol
     #Added a try-catch block
     try:
@@ -45,6 +58,7 @@ def execute_query(query, params=None, return_id=False):
 # Route with insecure direct object reference
 @app.route('/menu/<id>', methods=['GET'])
 def get_menu_item(id):
+    """ Returns a single menu item by id, or a 404 if no matching item exists. """
     #Added a try-catch block
     try:
         #Security fix: Value passed separately and not concatenated into query string, prevents SQL injection
@@ -62,6 +76,7 @@ def get_menu_item(id):
 # Route with missing error handling
 @app.route('/menu', methods=['GET'])
 def get_menu():
+    """ Returns every menu item. """
     #Added a try-catch block
     try:
         query = "SELECT * FROM menu_items"
@@ -73,7 +88,9 @@ def get_menu():
 
 # Route with broken POST implementation
 @app.route('/order', methods=['POST'])
+@auth.login_required #Auth fix: writes to the database, so requires Basic Auth credentials
 def create_order():
+    """ Creates a new order from a customer_name, requires auth, and returns the new order's id. """
     #Added a try-catch block
     try:
         data = request.get_json()
@@ -94,6 +111,7 @@ def create_order():
 # Route with N+1 query problem
 @app.route('/orders', methods=['GET'])
 def get_orders():
+    """ Returns every order with its items grouped together, using a single LEFT JOIN query. """
     #Added a try-catch block
     try:
         #N+1 fix: single LEFT JOIN query replaces the old per-order loop that requests the DB once per order
@@ -129,7 +147,9 @@ def get_orders():
 
 # Route with broken update
 @app.route('/order/<int:order_id>', methods=['PUT'])
+@auth.login_required #Auth fix: writes to the database, so requires Basic Auth credentials
 def update_order(order_id):
+    """ Updates an existing order's status, requires auth, and 404s if the order_id doesn't exist. """
     #Added try-catch block
     try:
         data = request.get_json()
@@ -154,7 +174,9 @@ def update_order(order_id):
 
 # Route with missing authentication
 @app.route('/menu', methods=['POST'])
+@auth.login_required #Auth fix: writes to the database, so requires Basic Auth credentials
 def add_menu_item():
+    """ Adds a new menu item from name/description/price/category, requires auth. """
     #Aded try-catch block
     try:
         data = request.get_json()
