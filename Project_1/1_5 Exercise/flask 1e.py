@@ -76,12 +76,16 @@ def get_menu_item(id):
 # Route with missing error handling
 @app.route('/menu', methods=['GET'])
 def get_menu():
-    """ Returns every menu item. """
-    #Added a try-catch block
+    """ Returns a page of menu items."""
+    #Added a try-catch block and pagination fixes
     try:
-        query = "SELECT * FROM menu_items"
-        items = execute_query(query)
-        return jsonify(items)
+        page = int(request.args.get('page', 1)) #Defaults to page 1 if not provided
+        limit = int(request.args.get('limit', 5)) #Defaults to 5 items per page
+        offset = (page - 1) * limit 
+
+        query = "SELECT * FROM menu_items LIMIT %s OFFSET %s"
+        items = execute_query(query, (limit, offset))
+        return jsonify(items )
     except pymysql.err.Error as e: 
         logger.error(f"Database error: {e}")
         return jsonify({"error": "Unable to get menu"}), 500
