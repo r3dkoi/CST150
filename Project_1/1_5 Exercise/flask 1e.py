@@ -48,7 +48,7 @@ def get_menu_item(id):
     #Added a try-catch block
     try:
         #Security fix: Value passed separately and not concatenated into query string, prevents SQL injection
-        query = "SELECT * FROM menu_items WHERE id = %s"
+        query = "SELECT * FROM menu_items WHERE item_id = %s" #Schema fix: menu_items' primary key column is item_id, not id
         #id passed as tuple to fill the %s placeholder safely
         item = execute_query(query, (id,))
         if not item:
@@ -132,12 +132,12 @@ def update_order(order_id):
     try:
         data = request.get_json()
         #Input validation added, checks if order_id already exists in database
-        check_query = "SELECT * FROM orders WHERE id = %s"
+        check_query = "SELECT * FROM orders WHERE order_id = %s" #Schema fix: orders' primary key column is order_id, not id
         existing_order = execute_query(check_query, (order_id,))
         if not existing_order: 
                 return jsonify({"error": "Order not found."}), 404
         #Security fix: Status and order id is passed separtely, prevents SQL injection
-        query = "UPDATE orders SET status = %s WHERE id = %s"
+        query = "UPDATE orders SET status = %s WHERE order_id = %s" #Schema fix: orders' primary key column is order_id, not id
         #Input validation added, checks if user included status of order when checking for the specific order id
         if 'status' in data:
             execute_query(query, (data['status'], order_id),)
