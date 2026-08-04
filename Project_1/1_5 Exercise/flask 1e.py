@@ -77,6 +77,8 @@ def create_order():
     #Added a try-catch block
     try:
         data = request.get_json()
+        if not data:
+                    return jsonify({"error": "Request body must be valid JSON"}), 400 #HTTP Status fix added
         #Security fix: Customer name is passed separately, prevents SQL injection
         query = "INSERT INTO orders (customer_name) VALUES(%s)"
         #Input validation added, checks if user inputs a valid customer name
@@ -131,6 +133,8 @@ def update_order(order_id):
     #Added try-catch block
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "Request body must be valid JSON"}), 400 #HTTP Status fix added
         #Input validation added, checks if order_id already exists in database
         check_query = "SELECT * FROM orders WHERE order_id = %s" #Schema fix: orders' primary key column is order_id, not id
         existing_order = execute_query(check_query, (order_id,))
@@ -154,6 +158,8 @@ def add_menu_item():
     #Aded try-catch block
     try:
         data = request.get_json()
+        if not data:
+                    return jsonify({"error": "Request body must be valid JSON"}), 400 #HTTP Status fix added
         #Security fix: All values passed separely, prevents SQL injection
         query = "INSERT INTO menu_items (name, description, price, category) VALUES (%s, %s, %s, %s)"
 
