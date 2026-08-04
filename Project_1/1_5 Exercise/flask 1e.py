@@ -51,6 +51,8 @@ def get_menu_item(id):
         query = "SELECT * FROM menu_items WHERE id = %s"
         #id passed as tuple to fill the %s placeholder safely
         item = execute_query(query, (id,))
+        if not item:
+            return jsonify({"error": "Menu item not found"}), 404 #Missing HTTP Status code fix: Returns 404 instead of an empty 200 when no menu item matches the given id
         return jsonify(item)
     except pymysql.err.Error as e: 
         logger.error(f"Database error: {e}")
@@ -92,27 +94,30 @@ def create_order():
 def get_orders():
     #Added a try-catch block
     try:
+        #N+1 fix: single LEFT JOIN query replaces the old per-order loop that requests the DB once per order
         query = """
                 SELECT orders.order_id, orders.customer_id, orders.staff_id, orders.order_date,
-                    orders.total_amount, order_details.quantity, order_details.subtotal
+                    orders.total_amount, order_details.item_id, order_details.quantity, order_details.subtotal
                 FROM orders
                 LEFT JOIN order_details ON orders.order_id = order_details.order_id
                 """
         rows = execute_query(query)
 
+        #Groups the flat joined rows back into one entry per order, since a JOIN
+        #returns one row per item (e.g an order with 3 items comes back as 3 rows)
         orders_dict = {}
         for row in rows:
             order_id, customer_id, staff_id, order_date, total_amount, item_id, quantity, subtotal = row
-            
+
             if order_id not in orders_dict:
                 orders_dict[order_id] = {
                     "order": (order_id, customer_id, staff_id, order_date, total_amount),
                     "items": []
                 }
 
-        #LEFT JOIN gives null item columns if order has no items & skips adding a fake item
-        if item_id is not None:
-            orders_dict[order_id]["items"].append((item_id, quantity, subtotal))
+            #LEFT JOIN gives null item columns if order has no items, so skip adding a fake item
+            if item_id is not None:
+                orders_dict[order_id]["items"].append((item_id, quantity, subtotal))
 
         result = list(orders_dict.values())
         return jsonify(result)
