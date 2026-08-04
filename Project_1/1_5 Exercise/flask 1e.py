@@ -14,11 +14,11 @@ auth = HTTPBasicAuth() #Reads/chercks authorisation header, and auto-returns 401
 
 @auth.verify_password
 def verify_password(username, password): 
-     """ Upon successful return of username, access to route is granted. 
-     Returning none is access denial. """
-     if username == os.getenv('API_USER') and password == os.getenv('API_PASS'):
-          return username
-     
+    """ Upon successful return of username, access to route is granted. 
+    Returning none is access denial. """
+    if username == os.getenv('API_USER') and password == os.getenv('API_PASS'):
+        return username
+
 #For logging errors
 logger = logging.getLogger(__name__)
 
@@ -73,20 +73,44 @@ def get_menu_item(id):
         return jsonify({"error": "Unable to get menu item"}), 500
 
 
+#Missing features fix: builds the WHERE/ORDER BY clauses and params for filtering by category
+#and sorting by price, kept separate from get_menu for decluttering
+def build_menu_query(args):
+    """ Builds the WHERE/ORDER BY clauses and params for filtering/sorting menu items. """
+    query = "SELECT * FROM menu_items"
+    params = []
+
+    category = args.get('category')
+    if category:
+        query += " WHERE category = %s"
+        params.append(category)
+
+    if args.get('sort') == 'price':
+        query += " ORDER BY price"
+
+    return query, params
+
 # Route with missing error handling
 @app.route('/menu', methods=['GET'])
 def get_menu():
-    """ Returns a page of menu items."""
+    """ Returns a page of menu items, optionally filtered by ?category= and sorted with ?sort=price."""
     #Added a try-catch block and pagination fixes
     try:
-        page = int(request.args.get('page', 1)) #Defaults to page 1 if not provided
-        limit = int(request.args.get('limit', 5)) #Defaults to 5 items per page
-        offset = (page - 1) * limit 
+        try:
+            page = int(request.args.get('page', 1)) #Defaults to page 1 if not provided
+            limit = int(request.args.get('limit', 5)) #Defaults to 5 items per page
+        except ValueError:
+            return jsonify({"error": "page and limit must be valid numbers"}), 400
+        offset = (page - 1) * limit
 
-        query = "SELECT * FROM menu_items LIMIT %s OFFSET %s"
-        items = execute_query(query, (limit, offset))
-        return jsonify(items )
-    except pymysql.err.Error as e: 
+        #Missing features fix: filtering by category and sorting by price
+        query, params = build_menu_query(request.args)
+        query += " LIMIT %s OFFSET %s"
+        params += [limit, offset]
+
+        items = execute_query(query, tuple(params))
+        return jsonify(items)
+    except pymysql.err.Error as e:
         logger.error(f"Database error: {e}")
         return jsonify({"error": "Unable to get menu"}), 500
 
@@ -115,37 +139,47 @@ def create_order():
 # Route with N+1 query problem
 @app.route('/orders', methods=['GET'])
 def get_orders():
-    """ Returns every order with its items grouped together, using a single LEFT JOIN query. """
+    """ Returns a page of orders with their items grouped together, using ?page= and ?limit= query params. """
     #Added a try-catch block
     try:
-        #N+1 fix: single LEFT JOIN query replaces the old per-order loop that requests the DB once per order
-        query = """
-                SELECT orders.order_id, orders.customer_id, orders.staff_id, orders.order_date,
-                    orders.total_amount, order_details.item_id, order_details.quantity, order_details.subtotal
-                FROM orders
-                LEFT JOIN order_details ON orders.order_id = order_details.order_id
-                """
-        rows = execute_query(query)
+        try:
+            page = int(request.args.get('page', 1)) #Defaults to page 1 if not provided
+            limit = int(request.args.get('limit', 5)) #Defaults to 5 orders per page
+        except ValueError:
+            return jsonify({"error": "page and limit must be valid numbers"}), 400
+        offset = (page - 1) * limit
 
-        #Groups the flat joined rows back into one entry per order, since a JOIN
-        #returns one row per item (e.g an order with 3 items comes back as 3 rows)
-        orders_dict = {}
-        for row in rows:
-            order_id, customer_id, staff_id, order_date, total_amount, item_id, quantity, subtotal = row
+        #Pagination fix: paginate on orders first (one row per order), so a page always
+        #contains whole orders instead of cutting an order's items off mid-way
+        orders_query = "SELECT * FROM orders LIMIT %s OFFSET %s"
+        orders_rows = execute_query(orders_query, (limit, offset))
 
-            if order_id not in orders_dict:
-                orders_dict[order_id] = {
-                    "order": (order_id, customer_id, staff_id, order_date, total_amount),
-                    "items": []
-                }
+        order_ids = [row[0] for row in orders_rows] #row[0] is order_id
 
-            #LEFT JOIN gives null item columns if order has no items, so skip adding a fake item
-            if item_id is not None:
-                orders_dict[order_id]["items"].append((item_id, quantity, subtotal))
+        #No orders on this page (e.g. page number beyond the last page) - nothing to join, return empty
+        if not order_ids:
+            return jsonify([])
 
-        result = list(orders_dict.values())
+        #Builds one %s placeholder per order_id, since IN (...) needs one per value
+        placeholders = ', '.join(['%s'] * len(order_ids))
+        items_query = f"SELECT order_id, item_id, quantity, subtotal FROM order_details WHERE order_id IN ({placeholders})"
+        item_rows = execute_query(items_query, tuple(order_ids))
+
+        #Groups items by order_id so they can be attached to the right order below
+        items_by_order = {}
+        for order_id, item_id, quantity, subtotal in item_rows:
+            items_by_order.setdefault(order_id, []).append((item_id, quantity, subtotal))
+
+        result = []
+        for row in orders_rows:
+            order_id = row[0]
+            result.append({
+                "order": row,
+                "items": items_by_order.get(order_id, []) #Empty list if this order has no items
+            })
+
         return jsonify(result)
-    except pymysql.err.Error as e: 
+    except pymysql.err.Error as e:
         logger.error(f"Database error: {e}")
         return jsonify({"error": "Unable to get orders"}), 500
 
@@ -172,6 +206,30 @@ def update_order(order_id):
             return jsonify({"message": "Order updated"})
         else:
             return jsonify({"error": "Status field required"}), 400
+    except pymysql.err.Error as e: 
+        logger.error(f"Database error: {e}")
+        return jsonify({"error": "Unable to update order"}), 500
+
+#Example of Delete Endpoint Created
+@app.route('/menu/<int:item_id>', methods=['DELETE'])
+@auth.login_required
+def delete_menu_item():
+    """Removes an existing menu item from the menu"""
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Request body must be valid JSON"}), 400 
+        check_query = "SELECT * FROM menu_items WHERE item_id = %s" 
+        existing_menu_item = execute_query(check_query, (item_id,))
+        if not existing_menu_item: 
+                return jsonify({"error": "Menu item not found."}), 404
+
+        query = "DELETE FROM menu_items WHERE item_id = %s"
+        if 'item_id' in data:
+            execute_query(query, (data['item_id']),)
+            return jsonify({"message": "Menu item removed."})
+        else:
+            return jsonify({"error": "Valid item required"}), 400
     except pymysql.err.Error as e: 
         logger.error(f"Database error: {e}")
         return jsonify({"error": "Unable to update order"}), 500
@@ -204,6 +262,7 @@ def add_menu_item():
     except pymysql.err.Error as e: 
         logger.error(f"Database error: {e}")
         return jsonify({"error": "Unable to add menu item"}), 500
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
