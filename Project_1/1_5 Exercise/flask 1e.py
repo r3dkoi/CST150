@@ -53,7 +53,25 @@ def execute_query(query, params=None, return_id=False):
         conn.rollback()   #Discard any uncommitted changes on failure, particularly handles proper transaction handling for creating_orders
         raise #Re-raise so calling route can build proper HTP error response
     finally:
-        conn.close() 
+        conn.close()
+
+#Transaction fix: runs multiple queries on ONE connection with ONE commit at the end,
+#so a multi-step operation (like deleting an order's items, then the order) is all-or-nothing
+def execute_transaction(queries):
+    """ Runs a list of (query, params) tuples as a single transaction: all commit together,
+    or all roll back together if any one of them fails. """
+    conn = pool.connection()
+    try:
+        cursor = conn.cursor()
+        for query, params in queries:
+            cursor.execute(query, params)
+        conn.commit() #Only commits once every query in the list has succeeded
+    except pymysql.err.Error as e:
+        logger.error(f"Database error: {e}")
+        conn.rollback() #Undoes ALL queries in this transaction, not just the one that failed
+        raise
+    finally:
+        conn.close()
 
 # Route with insecure direct object reference
 @app.route('/menu/<id>', methods=['GET'])
@@ -206,33 +224,52 @@ def update_order(order_id):
             return jsonify({"message": "Order updated"})
         else:
             return jsonify({"error": "Status field required"}), 400
-    except pymysql.err.Error as e: 
+    except pymysql.err.Error as e:
         logger.error(f"Database error: {e}")
         return jsonify({"error": "Unable to update order"}), 500
 
-#Example of Delete Endpoint Created
+#Missing features fix: DELETE endpoint for orders
+@app.route('/order/<int:order_id>', methods=['DELETE'])
+@auth.login_required #Auth fix: writes to the database, so requires Basic Auth credentials
+def delete_order(order_id):
+    """Removes an existing order, requires auth, and 404s if the order_id doesn't exist."""
+    try:
+        #Input validation added, checks if order_id already exists in database
+        check_query = "SELECT * FROM orders WHERE order_id = %s"
+        existing_order = execute_query(check_query, (order_id,))
+        if not existing_order:
+            return jsonify({"error": "Order not found."}), 404
+
+        #order_details rows reference this order_id via a foreign key with no ON DELETE CASCADE,
+        #so they must be deleted first or this DELETE will fail with a foreign key constraint error.
+        #Transaction fix: both deletes run as one transaction, so a failure on either one rolls back both
+        execute_transaction([
+            ("DELETE FROM order_details WHERE order_id = %s", (order_id,)),
+            ("DELETE FROM orders WHERE order_id = %s", (order_id,)),
+        ])
+        return jsonify({"message": "Order removed."})
+    except pymysql.err.Error as e:
+        logger.error(f"Database error: {e}")
+        return jsonify({"error": "Unable to delete order"}), 500
+
+#Missing features fix: DELETE endpoint for menu items
 @app.route('/menu/<int:item_id>', methods=['DELETE'])
 @auth.login_required
-def delete_menu_item():
-    """Removes an existing menu item from the menu"""
+def delete_menu_item(item_id):
+    """Removes an existing menu item from the menu, requires auth, and 404s if the item_id doesn't exist."""
     try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "Request body must be valid JSON"}), 400 
-        check_query = "SELECT * FROM menu_items WHERE item_id = %s" 
+        check_query = "SELECT * FROM menu_items WHERE item_id = %s"
         existing_menu_item = execute_query(check_query, (item_id,))
-        if not existing_menu_item: 
-                return jsonify({"error": "Menu item not found."}), 404
+        if not existing_menu_item:
+            return jsonify({"error": "Menu item not found."}), 404
 
+        #item_id already comes from the URL, no request body needed to identify what to delete
         query = "DELETE FROM menu_items WHERE item_id = %s"
-        if 'item_id' in data:
-            execute_query(query, (data['item_id']),)
-            return jsonify({"message": "Menu item removed."})
-        else:
-            return jsonify({"error": "Valid item required"}), 400
-    except pymysql.err.Error as e: 
+        execute_query(query, (item_id,))
+        return jsonify({"message": "Menu item removed."})
+    except pymysql.err.Error as e:
         logger.error(f"Database error: {e}")
-        return jsonify({"error": "Unable to update order"}), 500
+        return jsonify({"error": "Unable to delete menu item"}), 500
 
 # Route with missing authentication
 @app.route('/menu', methods=['POST'])
